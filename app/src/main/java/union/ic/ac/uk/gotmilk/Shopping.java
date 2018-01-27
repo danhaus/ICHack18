@@ -21,10 +21,19 @@ public class Shopping {
     }
 
     public int getSize() {
-        return shopItems.size();
+        if (shopItems.size() == 0) return 0;
+        return shopItems.size()-1;
     }
 
     public ArrayList<ShopItem> getShopItems() {
         return shopItems;
+    }
+
+    public void addShopItem(ShopItem shopItem) {
+        shopItems.add(shopItem);
+    }
+
+    public void replaceLastShopItem(ShopItem shopItem) {
+        shopItems.set(shopItems.size()-1, shopItem);
     }
 }
