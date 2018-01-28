@@ -2,7 +2,7 @@
 
 import json, re
 
-dat=json.load(open("jsonTxt.json", 'r'))
-nut=dat['nutrition']
-re.search([0-9]+'kcal', d)
-print(nut)
+dat = json.load(open("jsonTxt.json", 'r'))
+nut = dat['nutrition']
+kcals = re.search('[0-9]+kcal', nut)
+print(kcals.group(0))
