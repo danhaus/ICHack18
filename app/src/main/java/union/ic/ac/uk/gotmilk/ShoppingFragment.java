@@ -1,9 +1,19 @@
 package union.ic.ac.uk.gotmilk;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +25,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import behaviour.union.ic.ac.uk.gotmilk.R;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by leszek on 1/27/18.
@@ -41,12 +57,22 @@ public class ShoppingFragment extends Fragment {
         ShoppingLab shoppingLab = ShoppingLab.get(getContext());
         ArrayList<Shopping> shoppingArr = shoppingLab.getShoppingArr();
 
-        EditText shoppingName = view.findViewById(R.id.shopping_name);
+        final EditText shoppingName = view.findViewById(R.id.shopping_name);
+
+        shoppingName.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                shopping.setName(shoppingName.getText().toString());
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
         
         if (getArguments().getBoolean("new")) { //set next fragment
             //if the shopping is new the new list has the name "shopping" + size of array +1
             shopping = new Shopping("shopping " + String.valueOf(shoppingArr.size()+1));
-            shopping.addShopItem(new ShopItem(""));
             shoppingArr.add(shopping);
         } else {
             shoppingIndex = getArguments().getInt("index");
@@ -55,6 +81,26 @@ public class ShoppingFragment extends Fragment {
         shopItems = shopping.getShopItems();
         shoppingName.setText(shopping.getName());
 
+        Button productAdd = view.findViewById(R.id.shopping_add);
+        Button productCamera = view.findViewById(R.id.shopping_camera);
+        final EditText productName = view.findViewById(R.id.shopping_product_name);
+
+        productAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shopping.addShopItem(new ShopItem(productName.getText().toString()));
+                mAdapter.notifyDataSetChanged();
+                //scroll to the end of the recycler view
+                mShoppingRecycleView.smoothScrollToPosition(mShoppingRecycleView.getAdapter().getItemCount() - 1);
+            }
+        });
+
+        productCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dispatchTakePictureIntent();
+            }
+        });
 
         mShoppingRecycleView = view.findViewById(R.id.shopping_recycler_view);
         linearLayout = new LinearLayoutManager(getContext());
@@ -65,6 +111,49 @@ public class ShoppingFragment extends Fragment {
         return view;
     }
 
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    static final int REQUEST_TAKE_PHOTO = 1;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                Log.e("ERROR in photo", Log.getStackTraceString(ex));
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
     private void updateUI() {
         mAdapter = new ShoppingFragment.ShoppingAdapter(shopItems);
         mShoppingRecycleView.setAdapter(mAdapter);
@@ -72,25 +161,23 @@ public class ShoppingFragment extends Fragment {
 
     private class ShoppingHolder extends RecyclerView.ViewHolder {
         public TextView mName;
-        public Button mAdd;
-        public Button mPhoto;
+        public TextView mNum;
+        public Button mRemove;
         public ShopItem mShopItem;
 
 
         public ShoppingHolder(View itemView) {
             super(itemView);
-
+            mRemove = itemView.findViewById(R.id.shopping_remove);
             mName = itemView.findViewById(R.id.shopping_name);
-            mAdd = itemView.findViewById(R.id.shopping_add);
-            mPhoto = itemView.findViewById(R.id.shopping_camera);
+            mNum = itemView.findViewById(R.id.shopping_num);
 
             //replace the empty shopItem by what the user entered
-            mAdd.setOnClickListener(new View.OnClickListener() {
+            mRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    shopping.replaceLastShopItem(new ShopItem(mName.getText().toString()));
-                    shopping.addShopItem(new ShopItem(""));
-                    mAdapter.notifyItemInserted(shopping.getSize()-1);
+                    shopping.removeShopItem(getAdapterPosition());
+                    mAdapter.notifyDataSetChanged();
                 }
             });
         }
@@ -113,6 +200,7 @@ public class ShoppingFragment extends Fragment {
             ShopItem shopItem= mShopItems.get(position);
             holder.mShopItem = shopItem;
             holder.mName.setText(shopItem.getName());
+            holder.mNum.setText(String.valueOf(position+1) + ".");
         }
 
         @Override
