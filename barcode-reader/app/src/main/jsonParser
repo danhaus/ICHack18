@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+import json, re
+
+dat = json.load(open("jsonTxt.json", 'r'))
+nut = dat['nutrition']
+kcals = re.search('[0-9]+kcal', nut)
+print(kcals.group(0))
