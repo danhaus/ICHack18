@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Got Milk</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="shopping_lists">Shopping lists</string>
+    <string name="shopping_list_name">Name</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_list">Add a list using the button to the bottom right</string>
+    <string name="product_hint">Product name</string>
+    <string name="shopping_hint">Shopping list name</string>
+</resources>

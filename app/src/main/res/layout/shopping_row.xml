@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+    <EditText
+        android:hint="@string/product_hint"
+        android:id="@+id/shopping_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"/>
+    <Button
+        android:id="@+id/shopping_add"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/ic_add_black_24dp"/>
+    <Button
+        android:id="@+id/shopping_camera"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/ic_menu_camera"/>
+</LinearLayout>
