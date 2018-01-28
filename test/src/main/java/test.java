@@ -30,6 +30,7 @@ public class test {
             Response response = client.newCall(request).execute();
             String jsonArray = response.body().string();
             JSONObject Jobject = new JSONObject(jsonArray);
+            String name = Jobject.getString("description");
             String nut = Jobject.getString("nutrition");
 
             Matcher m = kcal.matcher(nut);
@@ -38,7 +39,7 @@ public class test {
             String kcalm = m.group(0);
             int s = parseInt(kcalm.substring(0, kcalm.length() - 4));
             System.out.println("kcal: "+s);
-
+            System.out.println("name: "+name);
 
 //            if (!jsonArray.equals("null")) {
 //                JSONArray array = new JSONArray(jsonArray);
