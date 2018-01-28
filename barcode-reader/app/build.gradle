@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.google.android.gms.samples.vision.barcodereader"
-        minSdkVersion 9
+        minSdkVersion 18
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -25,4 +25,5 @@ dependencies {
     // Important - the CameraSource implementation in this project requires version 8.1 or higher.
     compile 'com.google.android.gms:play-services-vision:9.4.0+'
     compile 'com.android.support:design:24.2.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
 }

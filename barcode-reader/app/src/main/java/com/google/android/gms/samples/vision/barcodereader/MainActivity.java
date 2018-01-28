@@ -17,6 +17,7 @@
 package com.google.android.gms.samples.vision.barcodereader;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
@@ -101,10 +102,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (requestCode == RC_BARCODE_CAPTURE) {
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
-                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    final Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
                     statusMessage.setText(R.string.barcode_success);
                     barcodeValue.setText(barcode.displayValue);
-                    Log.d(TAG, "Barcode read: " + barcode.displayValue);
+//                    AsyncTask.execute(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            //TODO your background code
+//                            BarcodeParser barcodePars = new BarcodeParser();
+//                            String name = barcodePars.makeCall(barcode.displayValue);
+////                    Log.d(TAG, "Barcode read: " + barcode.displayValue);
+//                            barcodeValue.setText(name);
+//                            Log.d(TAG, "Barcode read: " + name);
+//                        }
+//                    });
                 } else {
                     statusMessage.setText(R.string.barcode_failure);
                     Log.d(TAG, "No barcode captured, intent data is null");
