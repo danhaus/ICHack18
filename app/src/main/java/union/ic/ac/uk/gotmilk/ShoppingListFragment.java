@@ -1,17 +1,29 @@
 package union.ic.ac.uk.gotmilk;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import behaviour.union.ic.ac.uk.gotmilk.R;
@@ -26,18 +38,18 @@ public class ShoppingListFragment extends Fragment {
     private LinearLayoutManager linearLayout;
     private List<Shopping> shoppings;
     private View view;
+    FloatingActionButton fab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view  = inflater.inflate(R.layout.shopping_list_fragment, container, false);
 
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        fab = getActivity().findViewById(R.id.fab);
         fab.show();
 
         mShoppingRecycleView = view.findViewById(R.id.shopping_list_recycler_view);
         linearLayout = new LinearLayoutManager(getContext());
         mShoppingRecycleView.setLayoutManager(linearLayout);
-
         ShoppingLab shoppingLab = ShoppingLab.get(getContext());
         shoppings = shoppingLab.getShoppingArr();
 
@@ -62,7 +74,6 @@ public class ShoppingListFragment extends Fragment {
         public TextView mName;
         public TextView mSize;
         public Shopping mShopping;
-        public int mPosition;
 
 
         public ShoppingHolder(final View itemView) {
@@ -72,9 +83,10 @@ public class ShoppingListFragment extends Fragment {
 
                 @Override
                 public void onClick(View view) {
+                    fab.hide();
                     Fragment fragment = new ShoppingFragment();
                     Bundle args = new Bundle();
-                    args.putInt("index", mPosition);
+                    args.putInt("index", getAdapterPosition());
                     fragment.setArguments(args);
                     getFragmentManager().beginTransaction().
                             replace(R.id.flContent, fragment).addToBackStack(null).commit();
@@ -104,7 +116,6 @@ public class ShoppingListFragment extends Fragment {
             holder.mShopping = shopping;
             holder.mName.setText(shopping.getName());
             holder.mSize.setText(String.valueOf(shopping.getSize()));
-            holder.mPosition = position;
         }
 
         @Override

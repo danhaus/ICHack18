@@ -33,7 +33,11 @@ public class Shopping {
         shopItems.add(shopItem);
     }
 
-    public void replaceLastShopItem(ShopItem shopItem) {
-        shopItems.set(shopItems.size()-1, shopItem);
+    public void removeShopItem(int index) {
+        shopItems.remove(index);
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
