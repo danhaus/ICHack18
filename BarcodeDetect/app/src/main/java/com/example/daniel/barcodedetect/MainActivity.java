@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
             }
         });
+        
         ImageView myImageView = (ImageView) findViewById(R.id.imgview);
         TextView txtView = findViewById(R.id.txtContent);
         Bitmap myBitmap = BitmapFactory.decodeResource(
