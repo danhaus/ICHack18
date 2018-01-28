@@ -38,9 +38,8 @@ public class test {
             m.find();
             String kcalm = m.group(0);
             int s = parseInt(kcalm.substring(0, kcalm.length() - 4));
-            System.out.println("name: "+name);
             System.out.println("kcal: "+s);
-
+            System.out.println("name: "+name);
 
 //            if (!jsonArray.equals("null")) {
 //                JSONArray array = new JSONArray(jsonArray);
