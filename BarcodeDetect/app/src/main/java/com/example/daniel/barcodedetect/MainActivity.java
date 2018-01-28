@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         TextView txtView = findViewById(R.id.txtContent);
         Bitmap myBitmap = BitmapFactory.decodeResource(
                 getApplicationContext().getResources(),
-                R.drawable.redbull);
+                R.drawable.puppy);
         myImageView.setImageBitmap(myBitmap);
 
         BarcodeDetector detector =
